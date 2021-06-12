@@ -3,7 +3,7 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<flow name="system-weather-apiFlow" doc:id="1652332e-e8ea-4b7e-ad62-fd0cb2db3101" >
-		<logger level="INFO" doc:name="Logger" doc:id="39a5a634-e25e-4c52-8b0e-81637f903425" message="main-api-file"/>
-	</flow>
+	<sub-flow name="get-weather-via-ipSub_Flow" doc:id="e851db3b-aa19-41ac-ac1f-3eccc617e44c" >
+		<logger level="INFO" doc:name="Logger" doc:id="edf85261-aca6-4bc9-bacd-d871641b1f15" />
+	</sub-flow>
 </mule>
