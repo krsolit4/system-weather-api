@@ -11,7 +11,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
-	ip : vars.ip-addresss
+	apiKey : "c9e1aca42f544d9288e62ee03d5273cd",
+	ip : vars.'ip-addresss'
 }]]]></http:query-params>
 		</http:request>
 		<ee:transform doc:name="Transform Message" doc:id="f681b0f7-a995-4909-b147-e0c4e9a58f8c" >
