@@ -36,7 +36,12 @@ output application/json
 }
 ]]></ee:set-payload>
 			</ee:message>
-			<ee:variables />
+			<ee:variables >
+				<ee:set-variable variableName="originalPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
 	</sub-flow>
 </mule>

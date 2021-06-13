@@ -136,10 +136,11 @@ output application/json
     <flow name="get:\weather\ip\(ip-address):weather-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
-                <ee:set-variable variableName="ip-address">attributes.uriParams.'ip-address'</ee:set-variable>
+                <ee:set-variable variableName="ip-addresss">attributes.uriParams.'ip-address'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <logger level="INFO" message="get:\weather\ip\(ip-address):weather-api-config" />
+        <flow-ref doc:name="get-weather-via-ipSub_Flow" doc:id="cefe6cea-492e-4d29-b1d7-0d1b5e1139a9" name="get-weather-via-ipSub_Flow"/>
+		<logger level="INFO" message="get:\weather\ip\(ip-address):weather-api-config" />
     </flow>
     <flow name="get:\weather\postal-code\(postal-code):weather-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
