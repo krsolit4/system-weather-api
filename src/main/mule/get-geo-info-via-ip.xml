@@ -23,5 +23,20 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="ac446cee-cbba-4720-91e6-90a5575806dd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"country" : payload.country_name,
+	"postal-code" : payload.zipcode,
+	"state" : payload.state_prov,
+	"country-code" : payload.country_code2
+}
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
 	</sub-flow>
 </mule>

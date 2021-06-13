@@ -147,6 +147,7 @@ output application/json
                 <ee:set-variable variableName="postal-code">attributes.uriParams.'postal-code'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <logger level="INFO" message="get:\weather\postal-code\(postal-code):weather-api-config" />
+        <flow-ref doc:name="get-weather-via-postalSub_Flow" doc:id="4a29ad70-0be8-4e2b-9edf-1f9c1cb280fe" name="get-weather-via-postalSub_Flow"/>
+		<logger level="INFO" message="get:\weather\postal-code\(postal-code):weather-api-config" />
     </flow>
 </mule>
