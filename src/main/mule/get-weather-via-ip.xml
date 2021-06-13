@@ -5,10 +5,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="get-weather-via-ipSub_Flow" doc:id="e851db3b-aa19-41ac-ac1f-3eccc617e44c" >
-		<logger level="INFO" doc:name="Logger" doc:id="edf85261-aca6-4bc9-bacd-d871641b1f15" message="get-weather-via-ip flow started"/>
+		<logger level="INFO" doc:name="Log flow start" doc:id="edf85261-aca6-4bc9-bacd-d871641b1f15" message="get-weather-via-ip flow started"/>
 		<flow-ref doc:name="get-geo-info-via-ipSub_Flow" doc:id="58660272-a75a-4295-9d93-5456114fd607" name="get-geo-info-via-ipSub_Flow"/>
 		<set-variable value="#[payload]" doc:name="geoInfo" doc:id="1d543448-ebe0-4503-90c9-5da07d7a30a8" variableName="geoInfo"/>
-		<ee:transform doc:name="Transform Message" doc:id="00f566b2-c31f-4250-840b-be3db8039295" >
+		<ee:transform doc:name="postal-code var" doc:id="00f566b2-c31f-4250-840b-be3db8039295" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
@@ -16,10 +16,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 output application/java
 ---
 payload."postal-code"]]></ee:set-variable>
+				<ee:set-variable variableName="country-code" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.'country-code']]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="get-weather-via-postalSub_Flow" doc:id="bdbcc6ea-0278-4cec-8479-b3c1558540a3" name="get-weather-via-postalSub_Flow"/>
-		<ee:transform doc:name="Transform Message" doc:id="f5508a26-61ab-4785-be49-2873aa83c350" >
+		<ee:transform doc:name="JSON Payload" doc:id="f5508a26-61ab-4785-be49-2873aa83c350" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -27,7 +31,7 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="7b9cb3c8-51fd-4e95-913b-7da463ab64cd" >
+		<ee:transform doc:name="form final payload" doc:id="7b9cb3c8-51fd-4e95-913b-7da463ab64cd" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json

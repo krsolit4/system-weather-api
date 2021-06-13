@@ -124,31 +124,27 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\postal-code\(ip-addresss):weather-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform doc:name="Capture-ip-address" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="97da6386-f907-4ad1-aff5-677f8d50b390">
             <ee:variables>
-                <ee:set-variable variableName="ip-addresss">attributes.uriParams.'ip-addresss'</ee:set-variable>
+                <ee:set-variable variableName="ip-addresss"><![CDATA[attributes.uriParams.'ip-addresss']]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <logger level="INFO" doc:name="Logger" doc:id="d4b8859d-bfa3-48a6-bc45-3c4659cb8e46" />
 		<flow-ref doc:name="get-geo-info-via-ipSub_Flow" doc:id="9fc98ad1-842f-4352-96d1-8fca8cb14059" name="get-geo-info-via-ipSub_Flow"/>
-		<logger level="INFO" message="get:\postal-code\(ip-addresss):weather-api-config" />
     </flow>
     <flow name="get:\weather\ip\(ip-address):weather-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform doc:name="Capture-ip-address" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="6a53b139-da80-4c74-ab48-5a2e54916586">
             <ee:variables>
-                <ee:set-variable variableName="ip-addresss">attributes.uriParams.'ip-address'</ee:set-variable>
+                <ee:set-variable variableName="ip-addresss"><![CDATA[attributes.uriParams.'ip-address']]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="get-weather-via-ipSub_Flow" doc:id="cefe6cea-492e-4d29-b1d7-0d1b5e1139a9" name="get-weather-via-ipSub_Flow"/>
-		<logger level="INFO" message="get:\weather\ip\(ip-address):weather-api-config" />
     </flow>
     <flow name="get:\weather\postal-code\(postal-code):weather-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform doc:name="Capture-postal-code" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="f8228ea4-3699-4f9d-8a62-ce15cacb6b36">
             <ee:variables>
-                <ee:set-variable variableName="postal-code">attributes.uriParams.'postal-code'</ee:set-variable>
+                <ee:set-variable variableName="postal-code"><![CDATA[attributes.uriParams.'postal-code']]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="get-weather-via-postalSub_Flow" doc:id="4a29ad70-0be8-4e2b-9edf-1f9c1cb280fe" name="get-weather-via-postalSub_Flow"/>
-		<logger level="INFO" message="get:\weather\postal-code\(postal-code):weather-api-config" />
     </flow>
 </mule>

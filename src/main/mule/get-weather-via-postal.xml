@@ -7,16 +7,17 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="get-weather-via-postalSub_Flow" doc:id="6424a367-2ba1-444d-9bdd-f495f8a56cf5" >
 		<logger level="INFO" doc:name="Log Flow Start" doc:id="c2c3993c-814d-47b6-95c1-254900e0bb13" message="get-weather-via-postal-flow started"/>
-		<ee:transform doc:name="Transform Message" doc:id="14335a51-eeb3-4dbb-9cac-8709ca73bab8" >
+		<ee:transform doc:name="zipCode var" doc:id="14335a51-eeb3-4dbb-9cac-8709ca73bab8" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="zipCode" ><![CDATA[%dw 2.0
 output application/java
 ---
-vars.'postal-code']]></ee:set-variable>
+vars.'postal-code' ++ "," ++ vars.'country-code']]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="db9b0409-2968-448d-956e-fc183f07b82d" message="#[vars.zipCode]" category="zipCode"/>
 		<http:request method="GET" doc:name="Request Weather" doc:id="3c1b7154-6cd3-4be6-ba53-ee109ea57031" config-ref="HTTP_Request_config_weather" path="${weather.api.path}">
 			<http:query-params ><![CDATA[#[output application/java
 ---
@@ -24,16 +25,31 @@ vars.'postal-code']]></ee:set-variable>
 	zip : vars.'postal-code',
 	appid : "4e5998ad0b9d7da27bc48e8e1c4af02f"
 }]]]></http:query-params>
+			<http:response-validator >
+				<http:success-status-code-validator values="200..599" />
+			</http:response-validator>
 		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="377dfa97-811d-454d-8d63-65ce8ce27538" >
+		<logger level="INFO" doc:name="weather-api-response" doc:id="c2b1e030-e4bd-4611-a4c2-da04e27b0de7" message="#[payload]" category="weather-api-response"/>
+		<ee:transform doc:name="JSON payload" doc:id="377dfa97-811d-454d-8d63-65ce8ce27538" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="responseCodeMessage" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	reasonPhrase : attributes.reasonPhrase, 
+	statusCode : attributes.statusCode
+}]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="390fdf46-d42f-42d9-85af-dda506c1ee61" >
+		<choice doc:name="Success / Failure" doc:id="d0005190-99de-4753-817d-38a5dcd88e17" >
+			<when expression="#[vars.responseCodeMessage.statusCode == 200]">
+				<ee:transform doc:name="form response payload" doc:id="77c493dc-8c4b-4aa5-b959-ab0bf5a1d0dd" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -53,5 +69,11 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="2ef4b767-08a3-4e15-8efb-9f050fd96848" type="API:ERROR" description="Error Occured from Public API"/>
+			</otherwise>
+		</choice>
+		
 	</sub-flow>
 </mule>

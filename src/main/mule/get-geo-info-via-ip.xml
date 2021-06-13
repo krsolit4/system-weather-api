@@ -14,16 +14,32 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	apiKey : "c9e1aca42f544d9288e62ee03d5273cd",
 	ip : vars.'ip-addresss'
 }]]]></http:query-params>
+			<http:response-validator >
+				<http:success-status-code-validator values="200..599" />
+			</http:response-validator>
 		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="f681b0f7-a995-4909-b147-e0c4e9a58f8c" >
+		<logger level="INFO" doc:name="geo-api-response" doc:id="8770e850-ef25-4e81-bbf6-0969c0d3074e" message="#[payload]" category="geo-api-response"/>
+		<ee:transform doc:name="Payload to JSON" doc:id="f681b0f7-a995-4909-b147-e0c4e9a58f8c" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="responseCodeMessage" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	reasonPhrase : attributes.reasonPhrase, 
+	statusCode : attributes.statusCode
+}]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="ac446cee-cbba-4720-91e6-90a5575806dd" >
+		<logger level="INFO" doc:name="Log responseCodeMessage" doc:id="6f67334d-402a-486e-9caa-f3a542839cd4" message="#[vars.responseCodeMessage]" category="responseCodeMessage"/>
+		<choice doc:name="Success or Failure" doc:id="c2baf8a5-7be6-4806-a36a-daa8b92343d2" >
+			<when expression="#[vars.responseCodeMessage.statusCode == 200]">
+				<ee:transform doc:name="Form response payload" doc:id="8aa38e1a-ff29-44a8-83b6-ae33bcd4fda2" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -43,5 +59,11 @@ output application/json
 payload]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="5079db2c-2b40-47c0-84a6-db702908aba9" type="API:ERROR" description="Error Occured from Public API"/>
+			</otherwise>
+		</choice>
+		
 	</sub-flow>
 </mule>
