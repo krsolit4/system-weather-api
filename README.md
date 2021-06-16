@@ -7,6 +7,8 @@ This is a weather API.
         - to fetch geolocation details
     -api.openweathermap.org/data/2.5/weather
         - to fetch the weather details
+- The API stores all the unique zipcode details in a opensource database. 
+    - sql3.freesqldatabase.com
 
 NOTE : The API uses free developer trial account to get the details from the opensource API, hence the accuracy of data may not be reliable all the time.
 
