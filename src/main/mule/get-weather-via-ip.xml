@@ -42,6 +42,23 @@ payload ++ {
 	cor_longitude : vars.originalPayload.longitude
 }]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="dbinsert" ><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ {
+	country_name : vars.originalPayload.country_name,
+	country_capital : vars.originalPayload.country_capital,
+	country_code : vars.originalPayload.country_code2 ++ "/" ++ vars.originalPayload.country_code3,
+	state_province : vars.originalPayload.state_prov,
+	city_name : vars.originalPayload.city,
+	cor_latitude : vars.originalPayload.latitude,
+	cor_longitude : vars.originalPayload.longitude
+}]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
+		<async doc:name="Async" doc:id="f82809dd-320a-4cc7-8c0e-9a270e1ec4e8" >
+			<flow-ref doc:name="update-zipcode-listFlow" doc:id="d0332252-d269-45e3-a9e6-2d15379d1b71" name="update-zipcode-listFlow"/>
+		</async>
 	</sub-flow>
 </mule>

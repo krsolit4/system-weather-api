@@ -6,11 +6,14 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<flow name="update-zipcode-listFlow" doc:id="29e66782-3466-4efa-b032-60bbf2a3eb6f" >
-		<scheduler doc:name="Scheduler" doc:id="c0cb615e-669a-4b87-a5c3-2811fd0240be" >
-			<scheduling-strategy >
-				<fixed-frequency frequency="10000"/>
-			</scheduling-strategy>
-		</scheduler>
+		<ee:transform doc:name="Transform Message" doc:id="1149446c-86bc-4c2b-880e-61d7d08d239f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.dbinsert]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 		<ee:transform doc:name="Transform Message" doc:id="65b07ff3-8173-40a0-a5c5-9230df5e3343" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
