@@ -1,35 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 	<sub-flow name="get-weather-via-ipSub_Flow" doc:id="e851db3b-aa19-41ac-ac1f-3eccc617e44c" >
 		<logger level="INFO" doc:name="Logger" doc:id="edf85261-aca6-4bc9-bacd-d871641b1f15" message="get-weather-via-ip flow started"/>
 		<flow-ref doc:name="get-geo-info-via-ipSub_Flow" doc:id="58660272-a75a-4295-9d93-5456114fd607" name="get-geo-info-via-ipSub_Flow"/>
 		<set-variable value="#[payload]" doc:name="geoInfo" doc:id="1d543448-ebe0-4503-90c9-5da07d7a30a8" variableName="geoInfo"/>
-		<ee:transform doc:name="Transform Message" doc:id="00f566b2-c31f-4250-840b-be3db8039295" >
-			<ee:message >
+		<set-variable value="#[payload.state]" doc:name="state_name" doc:id="c1557844-8561-41c7-be09-1cb273c9b41c" variableName="state_name"/>
+		<ee:transform doc:name="Transform Message" doc:id="00f566b2-c31f-4250-840b-be3db8039295">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="postal-code" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="postal-code"><![CDATA[%dw 2.0
 output application/java
 ---
 payload."postal-code"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="get-weather-via-postalSub_Flow" doc:id="bdbcc6ea-0278-4cec-8479-b3c1558540a3" name="get-weather-via-postalSub_Flow"/>
-		<ee:transform doc:name="Transform Message" doc:id="f5508a26-61ab-4785-be49-2873aa83c350" >
+		<logger level="INFO" doc:name="Log state name of IP" doc:id="78b3674b-8457-40e5-bdbc-1c297021db18" message="#[vars.state_name]" category="state name of IP"/>
+		<db:select doc:name="retrieve locations" doc:id="4e758e2d-32e3-4a86-b396-533bd673e7e1" config-ref="Database_Config" target="db_response">
+			<db:sql ><![CDATA[SELECT * FROM locations WHERE state = :state_name]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'state_name' : vars.state_name}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="2c395201-0229-4d27-8c95-97bb67313d0f" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="db_response" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.db_response]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log db_response" doc:id="2405232b-35f5-4bfe-b257-846d358aee4d" message="#[vars.db_response]" category="db_response"/>
+		<choice doc:name="Choice" doc:id="27c628d5-fce2-471d-92bf-5df960ac1d20" >
+			<when expression="#[vars.db_response[0].State == vars.state_name]">
+				<logger level="INFO" doc:name="Logger" doc:id="763be95a-8ab2-472f-8dae-388a28b75fb5" message="Location Match" category="location-list"/>
+				<flow-ref doc:name="get-weather-via-postalSub_Flow" doc:id="bdbcc6ea-0278-4cec-8479-b3c1558540a3" name="get-weather-via-postalSub_Flow" />
+				<ee:transform doc:name="Transform Message" doc:id="f5508a26-61ab-4785-be49-2873aa83c350">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="7b9cb3c8-51fd-4e95-913b-7da463ab64cd" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+				<ee:transform doc:name="Transform Message" doc:id="7b9cb3c8-51fd-4e95-913b-7da463ab64cd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload ++ {
@@ -42,8 +63,8 @@ payload ++ {
 	cor_longitude : vars.originalPayload.longitude
 }]]></ee:set-payload>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="dbinsert" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="dbinsert"><![CDATA[%dw 2.0
 output application/json
 ---
 payload ++ {
@@ -57,8 +78,32 @@ payload ++ {
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+				<ee:transform doc:name="Transform Message" doc:id="7762b990-3386-4eb1-a94e-1da2d03787d0" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ {location : vars.db_response[0]}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="d8b916e1-fc31-407f-a77e-403e29e66f1e" message="Location did not match" category="location-list"/>
+				<ee:transform doc:name="Transform Message" doc:id="48b051c2-8e97-471d-adee-677208d2de3b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	error : 'State of the given IP does not exist in the list of organization offices'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="500" doc:name="Set Error Code" doc:id="3628df3b-75b5-459c-a578-b50604bda731" variableName="httpStatus"/>
+			</otherwise>
+		</choice>
 		<async doc:name="Async" doc:id="f82809dd-320a-4cc7-8c0e-9a270e1ec4e8" >
-			<flow-ref doc:name="update-zipcode-listFlow" doc:id="d0332252-d269-45e3-a9e6-2d15379d1b71" name="update-zipcode-listFlow"/>
+			<logger level="INFO" doc:name="mock update-zipcode-listFlow" doc:id="be958e98-01bd-4107-bdcb-cfffb6ee6dab" message="add update-zipcode-listFlow here"/>
 		</async>
 	</sub-flow>
 </mule>
