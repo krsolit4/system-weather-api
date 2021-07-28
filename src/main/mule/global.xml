@@ -18,9 +18,9 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	<http:request-config name="HTTP_Request_config_weather" doc:name="HTTP Request configuration" doc:id="4df9d0fe-2058-479a-96a1-a71d85286030" >
 		<http:request-connection protocol="HTTPS" host="${weather.api.host}" port="${weather.api.port}" />
 	</http:request-config>
-	<api-gateway:autodiscovery apiId="16963855" doc:name="API Autodiscovery" doc:id="da129830-f460-4bd8-9fa8-7491aaa58688" flowRef="weather-api-main" />
+	<!-- <api-gateway:autodiscovery apiId="16963855" doc:name="API Autodiscovery" doc:id="da129830-f460-4bd8-9fa8-7491aaa58688" flowRef="weather-api-main" /> -->
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="cc250775-8fb4-454f-93b9-e6a91f19136b" >
-		<db:my-sql-connection host="sql3.freesqldatabase.com" port="3306" user="sql3418700" password="B7rQ3wispC" database="sql3418700" />
+		<db:my-sql-connection host="sql3.freesqldatabase.com" port="3306" user="sql3428063" password="L3GXcVtYbC" database="sql3428063" />
 	</db:config>
 	
 	
