@@ -39,7 +39,7 @@ payload]]></ee:set-payload>
 output application/json
 ---
 {
-	country : payload.sys.payload,
+	country : payload.sys.country,
 	time_zone : "US",
 	weather : {
 		high_temperature : (((payload.main.temp_max as Number) - 273.15) * (9/5) + 32 ) default 0,
