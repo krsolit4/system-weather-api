@@ -102,8 +102,5 @@ output application/json
 				<set-variable value="500" doc:name="Set Error Code" doc:id="3628df3b-75b5-459c-a578-b50604bda731" variableName="httpStatus"/>
 			</otherwise>
 		</choice>
-		<async doc:name="Async" doc:id="f82809dd-320a-4cc7-8c0e-9a270e1ec4e8" >
-			<logger level="INFO" doc:name="mock update-zipcode-listFlow" doc:id="be958e98-01bd-4107-bdcb-cfffb6ee6dab" message="add update-zipcode-listFlow here"/>
-		</async>
 	</sub-flow>
 </mule>
